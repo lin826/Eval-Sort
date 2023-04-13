@@ -4,11 +4,14 @@
 #include <iostream>
 
 using namespace std;
+
+const int LEN = 1000000;
+const string OUTPUT_FILE = "./experiment_result.csv";
 namespace SortingEnum
 {
     // Reference: https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
-    enum SortingType { std_stable, merge_sort };
-    static const SortingType All[] = { std_stable, merge_sort };
+    enum SortingType { std_stable, insertion_sort, merge_sort, tim_sort };
+    static const SortingType All[] = { std_stable, insertion_sort, merge_sort, tim_sort };
 }
 
 void read_workload(string filename, int workload_arr[])
@@ -49,6 +52,34 @@ void std_stable_sort(int start[], int end[]) {
     stable_sort(start, end);
 }
 
+void merge(int arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    int L[n1], M[n2];
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++)
+        M[j] = arr[mid + 1 + j];
+
+    int i=0, j=0, k=left;
+    while (i < n1 && j < n2) {
+        if (L[i] <= M[j]) {
+            arr[k] = L[i]; i++;
+        } else {
+            arr[k] = M[j]; j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i]; i++; k++;
+    }
+    while (j < n2) {
+        arr[k] = M[j]; j++; k++;
+    }
+}
+
 void mergeSort(int array[], const int begin, const int end)
 {
     if (begin >= end)
@@ -57,57 +88,48 @@ void mergeSort(int array[], const int begin, const int end)
     const int mid = begin + (end - begin) / 2;
     mergeSort(array, begin, mid);
     mergeSort(array, mid + 1, end);
+    merge(array, begin, mid, end);
+}
 
-    const int subArrayOne = mid - begin + 1;
-    const int subArrayTwo = end - mid;
-
-    // Create temp arrays
-    int *leftArray = new int[subArrayOne], *rightArray = new int[subArrayTwo];
-
-    // Copy data to temp arrays leftArray[] and rightArray[]
-    for (int i = 0; i < subArrayOne; i++)
-        leftArray[i] = array[begin + i];
-    for (int j = 0; j < subArrayTwo; j++)
-        rightArray[j] = array[mid + 1 + j];
-
-    int indexOfSubArrayOne = 0, // Initial index of first sub-array
-        indexOfSubArrayTwo = 0, // Initial index of second sub-array
-        indexOfMergedArray = begin; // Initial index of merged array
-
-    // Merge the temp arrays back into array[left..right]
-    while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo) {
-        if (leftArray[indexOfSubArrayOne] <= rightArray[indexOfSubArrayTwo]) {
-            array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
-            indexOfSubArrayOne++;
-        } else {
-            array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
-            indexOfSubArrayTwo++;
+void insertionSort(int arr[], int left, int right)
+{
+    for (int i = left + 1; i <= right; i++)
+    {
+        int temp = arr[i];
+        int j = i - 1;
+        while (j >= left && arr[j] > temp)
+        {
+            arr[j+1] = arr[j];
+            j--;
         }
-        indexOfMergedArray++;
+        arr[j+1] = temp;
     }
-    // Copy the remaining elements of left[], if there are any
-    while (indexOfSubArrayOne < subArrayOne) {
-        array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
-        indexOfSubArrayOne++;
-        indexOfMergedArray++;
+}
+
+const int RUN = 32;
+void timSort(int arr[], int n)
+{
+    // Reference: https://www.geeksforgeeks.org/timsort/
+
+    // Sort individual subarrays of size RUN
+    for (int i = 0; i < n; i+=RUN)
+        insertionSort(arr, i, min((i+RUN-1), (n-1)));
+    for (int size = RUN; size < n; size = 2*size)
+    {
+        for (int left = 0; left < n; left += 2*size)
+        {
+            int mid = left + size - 1;
+            int right = min((left + 2*size - 1), (n-1));
+            if(mid < right)
+                merge(arr, left, mid, right);
+        }
     }
-    // Copy the remaining elements of right[], if there are any
-    while (indexOfSubArrayTwo < subArrayTwo) {
-        array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
-        indexOfSubArrayTwo++;
-        indexOfMergedArray++;
-    }
-    delete[] leftArray;
-    delete[] rightArray;
 }
 
 int main() {
-    const string OUTPUT_FILE = "./experiment_result.csv";
     write_column_name(OUTPUT_FILE);
 
-    const int len = 1000000;
-    int workload[len];
-
+    int workload[LEN];
     for (const SortingEnum::SortingType sort_type : SortingEnum::All) {
         for (int k=0; k<=100; k+=10) {
             for (int l=0; l<=100; l+=10) {
@@ -117,10 +139,16 @@ int main() {
                 time_t start_time = clock();
                 switch (sort_type) {
                     case SortingEnum::std_stable:
-                        std_stable_sort(workload, workload + len);
+                        std_stable_sort(workload, workload + LEN);
+                        break;
+                    case SortingEnum::insertion_sort:
+                        insertionSort(workload, 0, LEN);
                         break;
                     case SortingEnum::merge_sort:
-                        mergeSort(workload, 0, len);
+                        mergeSort(workload, 0, LEN);
+                        break;
+                    case SortingEnum::tim_sort:
+                        timSort(workload, LEN);
                         break;
                     default:
                         cout << "Cannot find the sort type." << endl;
