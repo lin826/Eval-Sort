@@ -6,7 +6,10 @@
 using namespace std;
 
 const int LEN = 1000000;
+const int RUN = 32; // TimSort individual subarrays of size RUN
+
 const string OUTPUT_FILE = "./experiment_result.csv";
+
 namespace SortingEnum
 {
     // Reference: https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
@@ -14,7 +17,7 @@ namespace SortingEnum
     static const SortingType All[] = { std_stable, insertion_sort, merge_sort, tim_sort };
 }
 
-void read_workload(string filename, int workload_arr[])
+void readWorkload(string filename, int workload_arr[])
 {
     ifstream myfile(filename, ios_base::in);
     if ( myfile.is_open() ) {
@@ -28,13 +31,13 @@ void read_workload(string filename, int workload_arr[])
     myfile.close();
 }
 
-void write_column_name(string filename) {
+void writeColumnNames(string filename) {
     ofstream myfile(filename);
     myfile << "Type, K, L, Runtime\n";
     myfile.close();
 }
 
-void write_result(string filename, int sorting_type, int k, int l, float proc_time) {
+void writeResult(string filename, int sorting_type, int k, int l, float proc_time) {
     ofstream myfile(filename, ios_base::app);
     myfile << sorting_type << ",";
     myfile << k << ",";
@@ -48,7 +51,7 @@ void printArray(int arr[], int len)
     cout << arr[0] << ", " << arr[1] << ", ..., " << arr[len - 1] << endl;
 }
 
-void std_stable_sort(int start[], int end[]) {
+void stdStableSort(int start[], int end[]) {
     stable_sort(start, end);
 }
 
@@ -106,12 +109,38 @@ void insertionSort(int arr[], int left, int right)
     }
 }
 
-const int RUN = 32;
+void swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void quickSort(int array[], int low, int high) {
+    // Reference: https://www.programiz.com/dsa/quick-sort
+    auto partition = [](int array[], int low, int high) {
+        int pivot = array[high];
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (array[j] <= pivot) {
+                i++;
+                swap(&array[i], &array[j]);
+            }
+        }
+        swap(&array[i + 1], &array[high]);
+        return (i + 1);
+    };
+
+    if (low < high) {
+        int pi = partition(array, low, high);
+
+        quickSort(array, low, pi - 1);
+        quickSort(array, pi + 1, high);
+    }
+}
+
 void timSort(int arr[], int n)
 {
     // Reference: https://www.geeksforgeeks.org/timsort/
-
-    // Sort individual subarrays of size RUN
     for (int i = 0; i < n; i+=RUN)
         insertionSort(arr, i, min((i+RUN-1), (n-1)));
     for (int size = RUN; size < n; size = 2*size)
@@ -127,19 +156,19 @@ void timSort(int arr[], int n)
 }
 
 int main() {
-    write_column_name(OUTPUT_FILE);
+    writeColumnNames(OUTPUT_FILE);
 
     int workload[LEN];
     for (const SortingEnum::SortingType sort_type : SortingEnum::All) {
         for (int k=0; k<=100; k+=10) {
             for (int l=0; l<=100; l+=10) {
                 string input_file = "./bods/workloads/createdata_K" + to_string(k) + "_L" + to_string(l) + ".txt";
-                read_workload(input_file, workload);
+                readWorkload(input_file, workload);
                 
                 time_t start_time = clock();
                 switch (sort_type) {
                     case SortingEnum::std_stable:
-                        std_stable_sort(workload, workload + LEN);
+                        stdStableSort(workload, workload + LEN);
                         break;
                     case SortingEnum::insertion_sort:
                         insertionSort(workload, 0, LEN);
@@ -157,7 +186,7 @@ int main() {
                 // printArray(workload, len); // DEBUG
 
                 float proc_time = (float)(clock() - start_time) / CLOCKS_PER_SEC;
-                write_result(OUTPUT_FILE, sort_type, k, l, proc_time);
+                writeResult(OUTPUT_FILE, sort_type, k, l, proc_time);
                 cout << input_file << "[" << sort_type << "]: " << proc_time << " seconds" << endl;
             }
         }
