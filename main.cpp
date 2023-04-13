@@ -13,8 +13,8 @@ const string OUTPUT_FILE = "./experiment_result.csv";
 namespace SortingEnum
 {
     // Reference: https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
-    enum SortingType { std_stable, insertion_sort, merge_sort, quick_sort, selection_sort, tim_sort };
-    static const SortingType All[] = { std_stable, insertion_sort, merge_sort, quick_sort, selection_sort, tim_sort };
+    enum SortingType { std_stable, insertion_sort, merge_sort, quick_sort, radix_sort, selection_sort, tim_sort };
+    static const SortingType All[] = { std_stable, insertion_sort, merge_sort, quick_sort, radix_sort, selection_sort, tim_sort };
 }
 
 void readWorkload(string filename, int workload_arr[])
@@ -139,6 +139,44 @@ void quickSort(int array[], int low, int high) {
     }
 }
 
+int getMax(int arr[], int size) 
+{ 
+    int max = arr[0]; 
+    for (int i = 1; i < size; i++) 
+        if (arr[i] > max) 
+            max = arr[i]; 
+    return max; 
+}
+
+void CountingSort(int arr[], int size, int div) 
+{ 
+    int output[size]; 
+    int count[10] = {0}; 
+  
+    for (int i = 0; i < size; i++) 
+        count[ (arr[i]/div)%10 ]++; 
+  
+    for (int i = 1; i < 10; i++) 
+        count[i] += count[i - 1]; 
+  
+    for (int i = size - 1; i >= 0; i--) 
+    { 
+        output[count[ (arr[i]/div)%10 ] - 1] = arr[i]; 
+        count[ (arr[i]/div)%10 ]--; 
+    } 
+  
+    for (int i = 0; i < size; i++) 
+        arr[i] = output[i]; 
+}
+
+void radixSort(int arr[], int size) 
+{ 
+    // Reference: https://simplesnippets.tech/radix-sort-algorithm-with-c-code-sorting-algorithms-data-structures-algorithms/
+    int m = getMax(arr, size); 
+    for (int div = 1; m/div > 0; div *= 10)
+        CountingSort(arr, size, div); 
+} 
+
 void selectionSort(int array[], int size) {
     // Reference: https://www.programiz.com/dsa/selection-sort
     for (int step = 0; step < size - 1; step++) {
@@ -194,6 +232,9 @@ int main() {
                         break;
                     case SortingEnum::quick_sort:
                         quickSort(workload, 0, LEN);
+                        break;
+                    case SortingEnum::radix_sort:
+                        radixSort(workload, LEN);
                         break;
                     case SortingEnum::selection_sort:
                         selectionSort(workload, LEN);

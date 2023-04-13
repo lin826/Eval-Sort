@@ -7,11 +7,10 @@
 ## Sorting Algorithms
 
 - [x] std::stable_sort
-- [ ] Bucket Sort
 - [x] Insertion Sort
 - [x] Merge Sort
 - [x] Quick Sort
-- [ ] Radix Sort
+- [x] Radix Sort
 - [x] Selection Sort
 - [x] Tim Sort
 - [ ] KL-addaptive Sort
