@@ -13,8 +13,8 @@ const string OUTPUT_FILE = "./experiment_result.csv";
 namespace SortingEnum
 {
     // Reference: https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
-    enum SortingType { std_stable, insertion_sort, merge_sort, tim_sort };
-    static const SortingType All[] = { std_stable, insertion_sort, merge_sort, tim_sort };
+    enum SortingType { std_stable, insertion_sort, merge_sort, quick_sort, selection_sort, tim_sort };
+    static const SortingType All[] = { std_stable, insertion_sort, merge_sort, quick_sort, selection_sort, tim_sort };
 }
 
 void readWorkload(string filename, int workload_arr[])
@@ -138,6 +138,21 @@ void quickSort(int array[], int low, int high) {
     }
 }
 
+void selectionSort(int array[], int size) {
+    // Reference: https://www.programiz.com/dsa/selection-sort
+    for (int step = 0; step < size - 1; step++) {
+        int min_idx = step;
+        for (int i = step + 1; i < size; i++) {
+            // To sort in descending order, change > to < in this line.
+            // Select the minimum element in each loop.
+            if (array[i] < array[min_idx])
+                min_idx = i;
+        }
+        // put min at the correct position
+        swap(&array[min_idx], &array[step]);
+    }
+}
+
 void timSort(int arr[], int n)
 {
     // Reference: https://www.geeksforgeeks.org/timsort/
@@ -175,6 +190,12 @@ int main() {
                         break;
                     case SortingEnum::merge_sort:
                         mergeSort(workload, 0, LEN);
+                        break;
+                    case SortingEnum::quick_sort:
+                        quickSort(workload, 0, LEN);
+                        break;
+                    case SortingEnum::selection_sort:
+                        selectionSort(workload, LEN);
                         break;
                     case SortingEnum::tim_sort:
                         timSort(workload, LEN);

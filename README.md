@@ -12,7 +12,7 @@
 - [x] Merge Sort
 - [x] Quick Sort
 - [ ] Radix Sort
-- [ ] Selection Sort
+- [x] Selection Sort
 - [x] Tim Sort
 - [ ] KL-addaptive Sort
 - [ ] Hybrid Sort
