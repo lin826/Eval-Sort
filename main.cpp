@@ -4,8 +4,12 @@
 #include <iostream>
 
 using namespace std;
-
-enum SortingType { std_stable, merge_sort };
+namespace SortingEnum
+{
+    // Reference: https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
+    enum SortingType { std_stable, merge_sort };
+    static const SortingType All[] = { std_stable, merge_sort };
+}
 
 void read_workload(string filename, int workload_arr[])
 {
@@ -18,10 +22,22 @@ void read_workload(string filename, int workload_arr[])
     } else {
         cout << "Failed to open the file." << endl;
     }
+    myfile.close();
 }
 
-void write_result(string filename, int k, int l, float proc_time, string sorting_name) {
+void write_column_name(string filename) {
+    ofstream myfile(filename);
+    myfile << "Type, K, L, Runtime\n";
+    myfile.close();
+}
 
+void write_result(string filename, int sorting_type, int k, int l, float proc_time) {
+    ofstream myfile(filename, ios_base::app);
+    myfile << sorting_type << ",";
+    myfile << k << ",";
+    myfile << l << ",";
+    myfile << proc_time << "\n";
+    myfile.close();
 }
 
 void printArray(int arr[], int len)
@@ -86,27 +102,36 @@ void mergeSort(int array[], const int begin, const int end)
 }
 
 int main() {
+    const string OUTPUT_FILE = "./experiment_result.csv";
+    write_column_name(OUTPUT_FILE);
+
     const int len = 1000000;
     int workload[len];
 
-    read_workload("./bods/workloads/createdata_K100_L100.txt", workload);
-    
-    time_t start_time = clock();
+    for (const SortingEnum::SortingType sort_type : SortingEnum::All) {
+        for (int k=0; k<=100; k+=10) {
+            for (int l=0; l<=100; l+=10) {
+                string input_file = "./bods/workloads/createdata_K" + to_string(k) + "_L" + to_string(l) + ".txt";
+                read_workload(input_file, workload);
+                
+                time_t start_time = clock();
+                switch (sort_type) {
+                    case SortingEnum::std_stable:
+                        std_stable_sort(workload, workload + len);
+                        break;
+                    case SortingEnum::merge_sort:
+                        mergeSort(workload, 0, len);
+                        break;
+                    default:
+                        cout << "Cannot find the sort type." << endl;
+                        return 0;
+                }
+                // printArray(workload, len); // DEBUG
 
-    const SortingType sort_type = merge_sort;
-    switch (sort_type) {
-        case std_stable:
-            std_stable_sort(workload, workload + len);
-            break;
-        case merge_sort:
-            mergeSort(workload, 0, len);
-            break;
-        default:
-            cout << "Cannot find the sort type." << endl;
-            return 0;
+                float proc_time = (float)(clock() - start_time) / CLOCKS_PER_SEC;
+                write_result(OUTPUT_FILE, sort_type, k, l, proc_time);
+                cout << input_file << "[" << sort_type << "]: " << proc_time << " seconds" << endl;
+            }
+        }
     }
-    printArray(workload, len); // DEBUG
-
-    float proc_time = (float)(clock() - start_time) / CLOCKS_PER_SEC;
-    cout << "sort_type[" << sort_type << "] " << proc_time << " seconds" << endl;
 }
