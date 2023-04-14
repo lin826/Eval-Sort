@@ -26,7 +26,7 @@ For example, we want to take `./bods/workloads/createdata_K100_L100.txt` as the 
 ./main.out ./bods/workloads/createdata_K100_L100.txt ./output/K100_L100.csv std_stable
 ```
 
-#### SORTING_ALGO selections
+#### Sorting Algorithms
 
 - std_stable
 - insertion_sort
@@ -35,15 +35,5 @@ For example, we want to take `./bods/workloads/createdata_K100_L100.txt` as the 
 - radix_sort
 - selection_sort
 - tim_sort
-
-## Sorting Algorithms
-
-- [x] std::stable_sort
-- [x] Insertion Sort
-- [x] Merge Sort
-- [x] Quick Sort
-- [x] Radix Sort
-- [x] Selection Sort
-- [x] Tim Sort
-- [ ] KL-addaptive Sort
-- [ ] Hybrid Sort
+<!-- - [ ] KL-addaptive Sort -->
+<!-- - [ ] Hybrid Sort -->
