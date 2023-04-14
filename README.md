@@ -6,6 +6,10 @@
 
 ## Experiment
 
+To replicate the experiment, simply run `bash experiment.sh`.
+
+The followings are step-by-step instructions.
+
 ### Compile
 
 ```sh
