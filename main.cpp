@@ -1,23 +1,60 @@
 #include <algorithm>
+#include <chrono>
 #include <ctime>
 #include <fstream>
 #include <iostream>
 
 using namespace std;
 
-const int LEN = 1000000;
 const int RUN = 32; // TimSort individual subarrays of size RUN
-
-const string OUTPUT_FILE = "./experiment_result.csv";
 
 namespace SortingEnum
 {
     // Reference: https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
-    enum SortingType { std_stable, insertion_sort, merge_sort, quick_sort, radix_sort, selection_sort, tim_sort };
+    enum SortingType { 
+        std_stable,
+        insertion_sort, 
+        merge_sort, 
+        quick_sort, 
+        radix_sort, 
+        selection_sort, 
+        tim_sort,
+        invalid_sort,
+    };
     static const SortingType All[] = { std_stable, insertion_sort, merge_sort, quick_sort, radix_sort, selection_sort, tim_sort };
+    static SortingType getType(string s) {
+        if (s == "std_stable") {
+            return std_stable;
+        }
+        if (s == "insertion_sort") {
+            return insertion_sort;
+        }
+        if (s == "merge_sort") {
+            return merge_sort;
+        }
+        if (s == "quick_sort") {
+            return quick_sort;
+        }
+        if (s == "radix_sort") {
+            return radix_sort;
+        }
+        if (s == "selection_sort") {
+            return selection_sort;
+        }
+        if (s == "tim_sort") {
+            return tim_sort;
+        }
+        return invalid_sort;
+    }
 }
 
-void readWorkload(string filename, int workload_arr[])
+int getWorkloadLen(string filename) {
+    // Reference: https://stackoverflow.com/questions/3072795/how-to-count-lines-of-a-file-in-c
+    ifstream myfile(filename);
+    return count(istreambuf_iterator<char>(myfile), istreambuf_iterator<char>(), '\n');
+}
+
+int readWorkload(string filename, int workload_arr[])
 {
     ifstream myfile(filename, ios_base::in);
     if ( myfile.is_open() ) {
@@ -25,24 +62,25 @@ void readWorkload(string filename, int workload_arr[])
         while ( myfile >> workload_arr[i]) {
             i += 1;
         }
+        myfile.close();
+        return 0;
     } else {
-        cout << "Failed to open the file." << endl;
+        cout << "Error: Failed to open the file." << endl;
+        return -1;
     }
-    myfile.close();
 }
 
 void writeColumnNames(string filename) {
-    ofstream myfile(filename);
-    myfile << "Type, K, L, Runtime\n";
+    ofstream myfile(filename, ios_base::app);
+    myfile << "Workload, Algorithm, Duration\n";
     myfile.close();
 }
 
-void writeResult(string filename, int sorting_type, int k, int l, float proc_time) {
+void writeResult(string filename, string input, string algo, int duration_nanoseconds) {
     ofstream myfile(filename, ios_base::app);
-    myfile << sorting_type << ",";
-    myfile << k << ",";
-    myfile << l << ",";
-    myfile << proc_time << "\n";
+    myfile << input << ",";
+    myfile << algo << ",";
+    myfile << duration_nanoseconds << "\n";
     myfile.close();
 }
 
@@ -209,49 +247,60 @@ void timSort(int arr[], int n)
     }
 }
 
-int main() {
-    writeColumnNames(OUTPUT_FILE);
-
-    int workload[LEN];
-    for (const SortingEnum::SortingType sort_type : SortingEnum::All) {
-        for (int k=0; k<=100; k+=10) {
-            for (int l=0; l<=100; l+=10) {
-                string input_file = "./bods/workloads/createdata_K" + to_string(k) + "_L" + to_string(l) + ".txt";
-                readWorkload(input_file, workload);
-                
-                time_t start_time = clock();
-                switch (sort_type) {
-                    case SortingEnum::std_stable:
-                        stdStableSort(workload, workload + LEN);
-                        break;
-                    case SortingEnum::insertion_sort:
-                        insertionSort(workload, 0, LEN);
-                        break;
-                    case SortingEnum::merge_sort:
-                        mergeSort(workload, 0, LEN);
-                        break;
-                    case SortingEnum::quick_sort:
-                        quickSort(workload, 0, LEN);
-                        break;
-                    case SortingEnum::radix_sort:
-                        radixSort(workload, LEN);
-                        break;
-                    case SortingEnum::selection_sort:
-                        selectionSort(workload, LEN);
-                        break;
-                    case SortingEnum::tim_sort:
-                        timSort(workload, LEN);
-                        break;
-                    default:
-                        cout << "Cannot find the sort type." << endl;
-                        return 0;
-                }
-                // printArray(workload, len); // DEBUG
-
-                float proc_time = (float)(clock() - start_time) / CLOCKS_PER_SEC;
-                writeResult(OUTPUT_FILE, sort_type, k, l, proc_time);
-                cout << input_file << "[" << sort_type << "]: " << proc_time << " seconds" << endl;
-            }
-        }
+int main(int argc, char* argv[]) {
+    if (argc < 4) {
+        cout << "Error: Plsease specify input/output file and the sorting algorithm." << endl;
+        return -1;
     }
+    cout << "================================\n";
+    cout << "Input file: " << argv[1] << "\n";
+    cout << "Output file: " << argv[2] << "\n";
+    cout << "Algorithm: " << argv[3] << "\n";
+
+    const string INPUT_FILE = argv[1];
+    const string OUTPUT_FILE = argv[2];
+    const string ALGO = argv[3];
+
+    const int N_SIZE = getWorkloadLen(INPUT_FILE);
+    cout << "N_SIZE: " << N_SIZE << "\n";
+    int* workload = new int[N_SIZE];
+    int read_result = readWorkload(INPUT_FILE, workload);
+    if (read_result < 0) {
+        return -1;
+    }
+    writeColumnNames(OUTPUT_FILE);
+    
+    cout << "================================\n";
+    auto start_time = chrono::high_resolution_clock::now();
+    switch (SortingEnum::getType(ALGO)) {
+        case SortingEnum::std_stable:
+            stdStableSort(workload, workload + N_SIZE);
+            break;
+        case SortingEnum::insertion_sort:
+            insertionSort(workload, 0, N_SIZE);
+            break;
+        case SortingEnum::merge_sort:
+            mergeSort(workload, 0, N_SIZE);
+            break;
+        case SortingEnum::quick_sort:
+            quickSort(workload, 0, N_SIZE);
+            break;
+        case SortingEnum::radix_sort:
+            radixSort(workload, N_SIZE);
+            break;
+        case SortingEnum::selection_sort:
+            selectionSort(workload, N_SIZE);
+            break;
+        case SortingEnum::tim_sort:
+            timSort(workload, N_SIZE);
+            break;
+        default:
+            cout << "Error: Cannot find the sort type.\n";
+            return 0;
+    }
+    // // printArray(workload, len); // DEBUG
+    auto end_time = chrono::high_resolution_clock::now();
+    auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
+    writeResult(OUTPUT_FILE, INPUT_FILE, ALGO, proc_time.count());
+    cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
 }
