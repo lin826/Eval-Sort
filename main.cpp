@@ -70,12 +70,6 @@ int readWorkload(string filename, int workload_arr[])
     }
 }
 
-void writeColumnNames(string filename) {
-    ofstream myfile(filename, ios_base::app);
-    myfile << "Workload, Algorithm, Duration\n";
-    myfile.close();
-}
-
 void writeResult(string filename, string input, string algo, int duration_nanoseconds) {
     ofstream myfile(filename, ios_base::app);
     myfile << input << ",";
@@ -268,9 +262,9 @@ int main(int argc, char* argv[]) {
     if (read_result < 0) {
         return -1;
     }
-    writeColumnNames(OUTPUT_FILE);
     
     cout << "================================\n";
+    cout << "Start sorting...\n";
     auto start_time = chrono::high_resolution_clock::now();
     switch (SortingEnum::getType(ALGO)) {
         case SortingEnum::std_stable:
