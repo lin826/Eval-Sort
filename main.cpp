@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <chrono>
-#include <ctime>
 #include <fstream>
 #include <iostream>
 
@@ -292,7 +291,7 @@ int main(int argc, char* argv[]) {
             cout << "Error: Cannot find the sort type.\n";
             return 0;
     }
-    // // printArray(workload, len); // DEBUG
+    // printArray(workload, N_SIZE); // DEBUG
     auto end_time = chrono::high_resolution_clock::now();
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
     writeResult(OUTPUT_FILE, INPUT_FILE, ALGO, proc_time.count());
