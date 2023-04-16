@@ -20,7 +20,7 @@ namespace SortingEnum
         tim_sort,
         invalid_sort,
     };
-    static const SortingType All[] = { std_stable, insertion_sort, merge_sort, quick_sort, radix_sort, selection_sort, tim_sort };
+    // static const SortingType All[] = { std_stable, insertion_sort, merge_sort, quick_sort, radix_sort, selection_sort, tim_sort };
     static SortingType getType(string s) {
         if (s == "std_stable") {
             return std_stable;
@@ -276,7 +276,7 @@ int main(int argc, char* argv[]) {
             mergeSort(workload, 0, N_SIZE);
             break;
         case SortingEnum::quick_sort:
-            quickSort(workload, 0, N_SIZE);
+            quickSort(workload, 0, N_SIZE-1);
             break;
         case SortingEnum::radix_sort:
             radixSort(workload, N_SIZE);
