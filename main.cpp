@@ -69,7 +69,7 @@ int readWorkload(string filename, int workload_arr[])
     }
 }
 
-void writeResult(string filename, string input, string algo, int duration_nanoseconds) {
+void writeResult(string filename, string input, string algo, long long duration_nanoseconds) {
     ofstream myfile(filename, ios_base::app);
     myfile << input << ",";
     myfile << algo << ",";
