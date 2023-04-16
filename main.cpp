@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <chrono>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 
@@ -140,34 +141,23 @@ void insertionSort(int arr[], int left, int right)
     }
 }
 
-void swap(int *a, int *b) {
-    int t = *a;
-    *a = *b;
-    *b = t;
+void swap(int arr[], int i, int j) {
+	int temp = arr[i];
+	arr[i] = arr[j];
+	arr[j] = temp;
 }
 
-int partition(int array[], int low, int high) {
-    int pivot = array[high];
-    int i = (low - 1);
-    for (int j = low; j < high; j++) {
-        if (array[j] <= pivot) {
-            i++;
-            swap(&array[i], &array[j]);
-        }
-    }
-    swap(&array[i + 1], &array[high]);
-    return (i + 1);
-}
+int compare(const void* a, const void* b)
+{
+	const int* x = (int*) a;
+	const int* y = (int*) b;
 
-void quickSort(int array[], int low, int high) {
-    // Reference: https://www.programiz.com/dsa/quick-sort
+	if (*x > *y)
+		return 1;
+	else if (*x < *y)
+		return -1;
 
-    if (low < high) {
-        int pi = partition(array, low, high);
-
-        quickSort(array, low, pi - 1);
-        quickSort(array, pi + 1, high);
-    }
+	return 0;
 }
 
 int getMax(int arr[], int size) 
@@ -219,7 +209,7 @@ void selectionSort(int array[], int size) {
                 min_idx = i;
         }
         // put min at the correct position
-        swap(&array[min_idx], &array[step]);
+        swap(array, min_idx, step);
     }
 }
 
@@ -276,7 +266,8 @@ int main(int argc, char* argv[]) {
             mergeSort(workload, 0, N_SIZE);
             break;
         case SortingEnum::quick_sort:
-            quickSort(workload, 0, N_SIZE-1);
+            // Reference: https://www.programiz.com/cpp-programming/library-function/cstdlib/qsort
+            qsort(workload, N_SIZE, sizeof(int), compare);
             break;
         case SortingEnum::radix_sort:
             radixSort(workload, N_SIZE);
