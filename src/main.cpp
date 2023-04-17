@@ -78,7 +78,8 @@ bool readWorkload(string filename, long long workload_arr[])
 
 void writeResult(string filename, long long k, long long l, string algo, long long duration_nanoseconds) {
     ofstream myfile(filename, ios_base::app);
-    myfile << k << "," << l << ",";
+    myfile << "./bods/workloads/createdata_K" << k << "_L" << l << ".txt,";
+    // myfile << k << "," << l << ",";
     myfile << algo << ",";
     myfile << duration_nanoseconds << "\n";
     myfile.close();
@@ -98,7 +99,7 @@ void merge(long long arr[], int left, int mid, int right) {
     int n1 = mid - left + 1;
     int n2 = right - mid;
 
-    long long L[n1], M[n2];
+    long long *L = new long long[n1], *M = new long long[n2];
     for (int i = 0; i < n1; i++)
         L[i] = arr[left + i];
     for (int j = 0; j < n2; j++)
@@ -176,32 +177,32 @@ long long getMax(long long arr[], int size)
     return max; 
 }
 
-void CountingSort(long long arr[], int size, int div) 
+void CountingSort(long long arr[], long long size, long long div) 
 { 
-    long long output[size]; 
+    long long *output = new long long[size]; 
     long long count[10] = {0}; 
   
-    for (int i = 0; i < size; i++) 
+    for (long long i = 0; i < size; i++) 
         count[ (arr[i]/div)%10 ]++; 
   
-    for (int i = 1; i < 10; i++) 
+    for (long long i = 1; i < 10; i++) 
         count[i] += count[i - 1]; 
   
-    for (int i = size - 1; i >= 0; i--) 
+    for (long long i = size - 1; i >= 0; i--) 
     { 
         output[count[ (arr[i]/div)%10 ] - 1] = arr[i]; 
         count[ (arr[i]/div)%10 ]--; 
     } 
   
-    for (int i = 0; i < size; i++) 
+    for (long long i = 0; i < size; i++) 
         arr[i] = output[i]; 
 }
 
-void radixSort(long long arr[], int size) 
+void radixSort(long long arr[], long long size) 
 { 
     // Reference: https://simplesnippets.tech/radix-sort-algorithm-with-c-code-sorting-algorithms-data-structures-algorithms/
-    int m = getMax(arr, size); 
-    for (int div = 1; m/div > 0; div *= 10)
+    long long m = getMax(arr, size); 
+    for (long long div = 1; m/div > 0; div *= 10)
         CountingSort(arr, size, div); 
 } 
 
@@ -235,11 +236,6 @@ void timSort(long long arr[], int n)
                 merge(arr, left, mid, right);
         }
     }
-}
-
-void klAdaptiveSort(int arr[], int k, int l)
-{
-    
 }
 
 string get_target(string s, string begin_s, string end_s) {
