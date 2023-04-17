@@ -24,65 +24,63 @@ class BHeap {
 };
 
 bool kl_sort(long long R[], long long OUT[], long long n, long long k, long long l) {
-    // Create two binary heaps S, G
-    BHeap S, G;
+   // Create two binary heaps S, G
+   BHeap S, G;
 
-    // Insert the first k+l+1 tuples (R[1],...,R[k+l+1]) into S
-    for (long long i = 0; i <= k+l; i++) {
-        // cout << "R[" << i << "]=" << R[i] << "\n ";
-        S.Insert(R[i]);
-    }
-    long long i_write = 0;
+   // Insert the first k+l+1 tuples (R[1],...,R[k+l+1]) into S
+   for (long long i = 0; i < k+l; i++) {
+      S.Insert(R[i]);
+   }
+   long long i_write = 0;
 
-    long long *TMP = new long long[n + 1];
-    for (long long i_read = S.Size(); i_read < n; i_read++) {
-        if (S.Size() <= 0) {
-            return false;
-        }
+   long long *TMP = new long long[n + 1];
+   for (long long i_read = S.Size(); i_read < n; i_read++) {
+      if (S.Size() <= 0) {
+         return false;
+      }
 
-        long long last_write = S.ExtractMin();
-        // Write last_write to TMP[i_write]
-        TMP[i_write] = last_write;
+      long long last_write = S.ExtractMin();
+      // Write last_write to TMP[i_write]
+      TMP[i_write] = last_write;
 
-        S.DeleteMin();
-        i_write += 1;
-        if (R[i_read] >= last_write) {
-            S.Insert(R[i_read]);
-        } else {
-            G.Insert(R[i_read]);
-        }
-    }
+      S.DeleteMin();
+      i_write += 1;
+      if (R[i_read] >= last_write) {
+         S.Insert(R[i_read]);
+      } else {
+         G.Insert(R[i_read]);
+      }
+   }
 
-    // Append all tuples in S to TMP, in sorted order
-    while (S.Size() > 0) {
-        TMP[i_write] = S.ExtractMin();
-        S.DeleteMin();
-        i_write += 1;
-    }
+   // Append all tuples in S to TMP, in sorted order
+   while (S.Size() > 0) {
+      TMP[i_write] = S.ExtractMin();
+      S.DeleteMin();
+      i_write += 1;
+   }
 
-    i_write = 0;
-    for (long long i_read = 0; i_read < n - G.Size(); i_read++) {
-        long long x = G.ExtractMin();
-        if (x < 0 || x > TMP[i_read]) {
-            // Write TMP[i_read] to OUT[i_write]
-            OUT[i_write] = TMP[i_read];
-        } else {
-            OUT[i_write] = x;
-            G.DeleteMin();
-            G.Insert(TMP[i_read]);
-        }
-        i_write += 1;
-    }
+   i_write = 0;
+   for (long long i_read = 0; i_read < n - G.Size(); i_read++) {
+      long long x = G.ExtractMin();
+      if (x < 0 || x > TMP[i_read]) {
+         // Write TMP[i_read] to OUT[i_write]
+         OUT[i_write] = TMP[i_read];
+      } else {
+         OUT[i_write] = x;
+         G.DeleteMin();
+         G.Insert(TMP[i_read]);
+      }
+      i_write += 1;
+   }
 
-    // Append all tuples in G to OUT, in sorted order
-    while (G.Size() > 0) {
-        OUT[i_write] = G.ExtractMin();
-        G.DeleteMin();
-        i_write += 1;
-    }
-    return true;
+   // Append all tuples in G to OUT, in sorted order
+   while (G.Size() > 0) {
+      OUT[i_write] = G.ExtractMin();
+      G.DeleteMin();
+      i_write += 1;
+   }
+   return true;
 }
-
 
 long long BHeap::Size() {
    return heap.size();

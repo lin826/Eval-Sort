@@ -283,7 +283,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     long long *OUT = new long long[N_SIZE + 1];
-    long long k_close = get_k(INPUT_FILE), l_glob = get_l(INPUT_FILE);
+    long long k = get_k(INPUT_FILE), l = get_l(INPUT_FILE);
     cout << "================================\n";
     cout << "Start sorting...\n";
     auto start_time = chrono::high_resolution_clock::now();
@@ -311,13 +311,7 @@ int main(int argc, char* argv[]) {
             timSort(workload, N_SIZE);
             break;
         case SortingEnum::kl_sort:
-            if (!kl_sort(workload, OUT, N_SIZE, k_close, l_glob)) {
-                printArray(workload, N_SIZE); // DEBUG
-                printArray(OUT, N_SIZE); // DEBUG
-                cout << "Error: Cannot sort in kl_sort.\n";
-                return -1;
-            }
-            printArray(workload, N_SIZE); // DEBUG
+            kl_sort(workload, OUT, N_SIZE, k * N_SIZE / 100 + 1, l * N_SIZE / 100 + 1);
             break;
         default:
             cout << "Error: Cannot find the sort type.\n";
@@ -325,7 +319,7 @@ int main(int argc, char* argv[]) {
     }
     auto end_time = chrono::high_resolution_clock::now();
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
-    writeResult(OUTPUT_FILE, k_close, l_glob, ALGO, proc_time.count());
+    writeResult(OUTPUT_FILE, k, l, ALGO, proc_time.count());
     cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
 
     delete [] workload, OUT;
