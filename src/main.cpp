@@ -19,6 +19,7 @@ namespace SortingEnum
         radix_sort, 
         selection_sort, 
         tim_sort,
+        kl_sort,
         invalid_sort,
     };
     // static const SortingType All[] = { std_stable, insertion_sort, merge_sort, quick_sort, radix_sort, selection_sort, tim_sort };
@@ -43,6 +44,9 @@ namespace SortingEnum
         }
         if (s == "tim_sort") {
             return tim_sort;
+        }
+        if (s == "kl_sort") {
+            return kl_sort;
         }
         return invalid_sort;
     }
@@ -284,11 +288,14 @@ int main(int argc, char* argv[]) {
         case SortingEnum::tim_sort:
             timSort(workload, N_SIZE);
             break;
+        case SortingEnum::kl_sort:
+            cout << "Error: Not implemented.\n";
+            break;
         default:
             cout << "Error: Cannot find the sort type.\n";
             return 0;
     }
-    printArray(workload, N_SIZE); // DEBUG
+    // printArray(workload, N_SIZE); // DEBUG
     auto end_time = chrono::high_resolution_clock::now();
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
     writeResult(OUTPUT_FILE, INPUT_FILE, ALGO, proc_time.count());
