@@ -54,19 +54,18 @@ int getWorkloadLen(string filename) {
     return count(istreambuf_iterator<char>(myfile), istreambuf_iterator<char>(), '\n');
 }
 
-int readWorkload(string filename, int workload_arr[])
+bool readWorkload(string filename, long long workload_arr[])
 {
     ifstream myfile(filename, ios_base::in);
     if ( myfile.is_open() ) {
-        int i = 0;
+        long long i = 0;
         while ( myfile >> workload_arr[i]) {
             i += 1;
         }
         myfile.close();
-        return 0;
+        return true;
     } else {
-        cout << "Error: Failed to open the file." << endl;
-        return -1;
+        return false;
     }
 }
 
@@ -78,20 +77,21 @@ void writeResult(string filename, string input, string algo, long long duration_
     myfile.close();
 }
 
-void printArray(int arr[], int len)
+void printArray(long long arr[], int len)
 {
-    cout << arr[0] << ", " << arr[1] << ", ..., " << arr[len - 1] << endl;
+    cout << arr[0] << ", " << arr[1] << ", " << arr[2] << ", ..., " ;
+    cout << arr[len - 2] << ", " << arr[len - 1] << endl;
 }
 
-void stdStableSort(int start[], int end[]) {
+void stdStableSort(long long start[], long long end[]) {
     stable_sort(start, end);
 }
 
-void merge(int arr[], int left, int mid, int right) {
+void merge(long long arr[], int left, int mid, int right) {
     int n1 = mid - left + 1;
     int n2 = right - mid;
 
-    int L[n1], M[n2];
+    long long L[n1], M[n2];
     for (int i = 0; i < n1; i++)
         L[i] = arr[left + i];
     for (int j = 0; j < n2; j++)
@@ -115,7 +115,7 @@ void merge(int arr[], int left, int mid, int right) {
     }
 }
 
-void mergeSort(int array[], const int begin, const int end)
+void mergeSort(long long array[], const int begin, const int end)
 {
     if (begin >= end)
         return; // Returns recursively
@@ -126,11 +126,11 @@ void mergeSort(int array[], const int begin, const int end)
     merge(array, begin, mid, end);
 }
 
-void insertionSort(int arr[], int left, int right)
+void insertionSort(long long arr[], int left, int right)
 {
     for (int i = left + 1; i <= right; i++)
     {
-        int temp = arr[i];
+        long long temp = arr[i];
         int j = i - 1;
         while (j >= left && arr[j] > temp)
         {
@@ -141,8 +141,8 @@ void insertionSort(int arr[], int left, int right)
     }
 }
 
-void swap(int arr[], int i, int j) {
-	int temp = arr[i];
+void swap(long long arr[], int i, int j) {
+	long long temp = arr[i];
 	arr[i] = arr[j];
 	arr[j] = temp;
 }
@@ -160,19 +160,19 @@ int compare(const void* a, const void* b)
 	return 0;
 }
 
-int getMax(int arr[], int size) 
+long long getMax(long long arr[], int size) 
 { 
-    int max = arr[0]; 
+    long long max = arr[0]; 
     for (int i = 1; i < size; i++) 
         if (arr[i] > max) 
             max = arr[i]; 
     return max; 
 }
 
-void CountingSort(int arr[], int size, int div) 
+void CountingSort(long long arr[], int size, int div) 
 { 
-    int output[size]; 
-    int count[10] = {0}; 
+    long long output[size]; 
+    long long count[10] = {0}; 
   
     for (int i = 0; i < size; i++) 
         count[ (arr[i]/div)%10 ]++; 
@@ -190,7 +190,7 @@ void CountingSort(int arr[], int size, int div)
         arr[i] = output[i]; 
 }
 
-void radixSort(int arr[], int size) 
+void radixSort(long long arr[], int size) 
 { 
     // Reference: https://simplesnippets.tech/radix-sort-algorithm-with-c-code-sorting-algorithms-data-structures-algorithms/
     int m = getMax(arr, size); 
@@ -198,7 +198,7 @@ void radixSort(int arr[], int size)
         CountingSort(arr, size, div); 
 } 
 
-void selectionSort(int array[], int size) {
+void selectionSort(long long array[], int size) {
     // Reference: https://www.programiz.com/dsa/selection-sort
     for (int step = 0; step < size - 1; step++) {
         int min_idx = step;
@@ -213,7 +213,7 @@ void selectionSort(int array[], int size) {
     }
 }
 
-void timSort(int arr[], int n)
+void timSort(long long arr[], int n)
 {
     // Reference: https://www.geeksforgeeks.org/timsort/
     for (int i = 0; i < n; i+=RUN)
@@ -228,6 +228,11 @@ void timSort(int arr[], int n)
                 merge(arr, left, mid, right);
         }
     }
+}
+
+void klAdaptiveSort(int arr[], int k, int l)
+{
+    
 }
 
 int main(int argc, char* argv[]) {
@@ -246,9 +251,10 @@ int main(int argc, char* argv[]) {
 
     const int N_SIZE = getWorkloadLen(INPUT_FILE);
     cout << "N_SIZE: " << N_SIZE << "\n";
-    int* workload = new int[N_SIZE];
-    int read_result = readWorkload(INPUT_FILE, workload);
-    if (read_result < 0) {
+    long long *workload = new long long[N_SIZE];
+    bool read_result = readWorkload(INPUT_FILE, workload);
+    if (read_result == false) {
+        cout << "Error: Failed to open the file." << endl;
         return -1;
     }
     
@@ -282,7 +288,7 @@ int main(int argc, char* argv[]) {
             cout << "Error: Cannot find the sort type.\n";
             return 0;
     }
-    // printArray(workload, N_SIZE); // DEBUG
+    printArray(workload, N_SIZE); // DEBUG
     auto end_time = chrono::high_resolution_clock::now();
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
     writeResult(OUTPUT_FILE, INPUT_FILE, ALGO, proc_time.count());
