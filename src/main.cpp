@@ -121,6 +121,7 @@ void merge(long long arr[], int left, int mid, int right) {
     while (j < n2) {
         arr[k] = M[j]; j++; k++;
     }
+    delete [] L, M;
 }
 
 void mergeSort(long long array[], const int begin, const int end)
@@ -196,6 +197,8 @@ void CountingSort(long long arr[], long long size, long long div)
   
     for (long long i = 0; i < size; i++) 
         arr[i] = output[i]; 
+    
+    delete [] output;
 }
 
 void radixSort(long long arr[], long long size) 
@@ -324,4 +327,6 @@ int main(int argc, char* argv[]) {
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
     writeResult(OUTPUT_FILE, k_close, l_glob, ALGO, proc_time.count());
     cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
+
+    delete [] workload, OUT;
 }
