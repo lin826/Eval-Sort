@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <string>
+
+#include "kl-sort.h"
 
 using namespace std;
 
@@ -73,9 +76,9 @@ bool readWorkload(string filename, long long workload_arr[])
     }
 }
 
-void writeResult(string filename, string input, string algo, long long duration_nanoseconds) {
+void writeResult(string filename, long long k, long long l, string algo, long long duration_nanoseconds) {
     ofstream myfile(filename, ios_base::app);
-    myfile << input << ",";
+    myfile << k << "," << l << ",";
     myfile << algo << ",";
     myfile << duration_nanoseconds << "\n";
     myfile.close();
@@ -239,6 +242,25 @@ void klAdaptiveSort(int arr[], int k, int l)
     
 }
 
+string get_target(string s, string begin_s, string end_s) {
+    int shift_i = begin_s.size();
+    size_t i = s.find(begin_s);
+    size_t j = s.substr(i + shift_i, s.size()-i).find(end_s);
+    return s.substr(i + shift_i, j);
+}
+
+long long get_k(string s) {
+    string k = get_target(s, "_K", "_L").c_str();
+    cout << "K: " << k << endl;
+    return atoll(k.c_str());
+}
+
+long long get_l(string s) {
+    string l = get_target(s, "_L", ".txt").c_str();
+    cout << "L: " << l << endl;
+    return atoll(l.c_str());
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 4) {
         cout << "Error: Plsease specify input/output file and the sorting algorithm." << endl;
@@ -261,7 +283,8 @@ int main(int argc, char* argv[]) {
         cout << "Error: Failed to open the file." << endl;
         return -1;
     }
-    
+    long long *OUT = new long long[N_SIZE + 1];
+    long long k_close = get_k(INPUT_FILE), l_glob = get_l(INPUT_FILE);
     cout << "================================\n";
     cout << "Start sorting...\n";
     auto start_time = chrono::high_resolution_clock::now();
@@ -289,15 +312,20 @@ int main(int argc, char* argv[]) {
             timSort(workload, N_SIZE);
             break;
         case SortingEnum::kl_sort:
-            cout << "Error: Not implemented.\n";
+            if (!kl_sort(workload, OUT, N_SIZE, k_close, l_glob)) {
+                printArray(workload, N_SIZE); // DEBUG
+                printArray(OUT, N_SIZE); // DEBUG
+                cout << "Error: Cannot sort in kl_sort.\n";
+                return -1;
+            }
+            printArray(workload, N_SIZE); // DEBUG
             break;
         default:
             cout << "Error: Cannot find the sort type.\n";
             return 0;
     }
-    // printArray(workload, N_SIZE); // DEBUG
     auto end_time = chrono::high_resolution_clock::now();
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
-    writeResult(OUTPUT_FILE, INPUT_FILE, ALGO, proc_time.count());
+    writeResult(OUTPUT_FILE, k_close, l_glob, ALGO, proc_time.count());
     cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
 }
