@@ -3,7 +3,7 @@
 g++ main.cpp -o main
 
 OUTPUT="./output/result.csv"
-declare -a ALGOS=("std_stable" "insertion_sort" "merge_sort" "quick_sort" "radix_sort" "selection_sort" "tim_sort")
+declare -a ALGOS=("kl_sort" "radix_sort" "std_stable" "merge_sort" "quick_sort" "tim_sort" "insertion_sort")
 
 clear_cache () {
     echo 3 > /proc/sys/vm/drop_caches && swapoff -a && swapon -a && printf '\n%s\n' 'Ram-cache and Swap Cleared';
