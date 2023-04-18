@@ -28,7 +28,7 @@ bool kl_sort(long long R[], long long OUT[], long long n, long long k, long long
    BHeap S, G;
 
    // Insert the first k+l+1 tuples (R[1],...,R[k+l+1]) into S
-   for (long long i = 0; i < k+l; i++) {
+   for (long long i = 0; i < k+l && i < n; i++) {
       S.Insert(R[i]);
    }
    long long i_write = 0;
