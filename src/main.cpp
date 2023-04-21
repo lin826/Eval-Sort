@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-#include "kl-sort.h"
+#include "kl_sort.h"
 
 using namespace std;
 
@@ -121,7 +121,8 @@ void merge(long long arr[], int left, int mid, int right) {
     while (j < n2) {
         arr[k] = M[j]; j++; k++;
     }
-    delete [] L, M;
+    delete [] L;
+    delete [] M;
 }
 
 void mergeSort(long long array[], const int begin, const int end)
@@ -311,7 +312,7 @@ int main(int argc, char* argv[]) {
             timSort(workload, N_SIZE);
             break;
         case SortingEnum::kl_sort:
-            kl_sort(workload, OUT, N_SIZE, k * N_SIZE / 100 + 1, l * N_SIZE / 100 + 1);
+            kl_sort(workload, OUT, N_SIZE, k * N_SIZE / 100, l * N_SIZE / 100);
             break;
         default:
             cout << "Error: Cannot find the sort type.\n";
@@ -322,5 +323,6 @@ int main(int argc, char* argv[]) {
     writeResult(OUTPUT_FILE, k, l, ALGO, proc_time.count());
     cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
 
-    delete [] workload, OUT;
+    delete [] workload;
+    delete [] OUT;
 }
