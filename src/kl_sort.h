@@ -1,7 +1,5 @@
 #include <cstdlib>
 #include <iostream>
-#include <iterator>
-#include <vector>
 
 #include "bin_heap.h"
 
