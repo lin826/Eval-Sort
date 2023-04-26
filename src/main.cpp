@@ -76,10 +76,19 @@ bool readWorkload(string filename, long long workload_arr[])
     }
 }
 
-void writeResult(string filename, long long k, long long l, string algo, long long duration_nanoseconds) {
+void writeResult(
+    string filename, 
+    long long k, 
+    long long k_div, 
+    long long l, 
+    long long l_div, 
+    string algo, 
+    long long duration_nanoseconds
+) {
     ofstream myfile(filename, ios_base::app);
-    myfile << "./bods/workloads/createdata_K" << k << "_L" << l << ".txt,";
-    // myfile << k << "," << l << ",";
+    // myfile << "./bods/workloads/createdata_K" << k << "_L" << l << ".txt,";
+    myfile << k << "," << k_div << ",";
+    myfile << l << "," << l_div << ",";
     myfile << algo << ",";
     myfile << duration_nanoseconds << "\n";
     myfile.close();
@@ -96,16 +105,16 @@ void stdStableSort(long long start[], long long end[]) {
 }
 
 void merge(long long arr[], int left, int mid, int right) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
+    long long n1 = mid - left + 1;
+    long long n2 = right - mid;
 
     long long *L = new long long[n1], *M = new long long[n2];
-    for (int i = 0; i < n1; i++)
+    for (long long i = 0; i < n1; i++)
         L[i] = arr[left + i];
-    for (int j = 0; j < n2; j++)
+    for (long long j = 0; j < n2; j++)
         M[j] = arr[mid + 1 + j];
 
-    int i=0, j=0, k=left;
+    long long i=0, j=0, k=left;
     while (i < n1 && j < n2) {
         if (L[i] <= M[j]) {
             arr[k] = L[i]; i++;
@@ -125,12 +134,12 @@ void merge(long long arr[], int left, int mid, int right) {
     delete [] M;
 }
 
-void mergeSort(long long array[], const int begin, const int end)
+void mergeSort(long long array[], const long long begin, const long long end)
 {
     if (begin >= end)
         return; // Returns recursively
  
-    const int mid = begin + (end - begin) / 2;
+    const long long mid = begin + (end - begin) / 2;
     mergeSort(array, begin, mid);
     mergeSort(array, mid + 1, end);
     merge(array, begin, mid, end);
@@ -208,7 +217,7 @@ void radixSort(long long arr[], long long size)
     long long m = getMax(arr, size); 
     for (long long div = 1; m/div > 0; div *= 10)
         CountingSort(arr, size, div); 
-} 
+}
 
 void selectionSort(long long array[], int size) {
     // Reference: https://www.programiz.com/dsa/selection-sort
@@ -272,8 +281,19 @@ int main(int argc, char* argv[]) {
     cout << "Algorithm: " << argv[3] << "\n";
 
     const string INPUT_FILE = argv[1];
+    const long long k = get_k(INPUT_FILE), l = get_l(INPUT_FILE);
     const string OUTPUT_FILE = argv[2];
     const string ALGO = argv[3];
+
+    long long k_div = 1, l_div = 1;
+    if (argc < 6) {
+        const string K_DIV = argv[4];
+        k_div = atoll(K_DIV.c_str());
+        const string L_DIV = argv[5];
+        l_div = atoll(L_DIV.c_str());
+    } else {
+        cout << "Warning: Using default k_div=1 and l_div=1." << endl;
+    }
 
     const int N_SIZE = getWorkloadLen(INPUT_FILE);
     cout << "N_SIZE: " << N_SIZE << "\n";
@@ -284,7 +304,6 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     long long *OUT = new long long[N_SIZE + 1];
-    long long k = get_k(INPUT_FILE), l = get_l(INPUT_FILE);
     cout << "================================\n";
     cout << "Start sorting...\n";
     auto start_time = chrono::high_resolution_clock::now();
@@ -312,7 +331,7 @@ int main(int argc, char* argv[]) {
             timSort(workload, N_SIZE);
             break;
         case SortingEnum::kl_sort:
-            kl_sort(workload, OUT, N_SIZE, k * N_SIZE / 100, l * N_SIZE / 100);
+            kl_sort(workload, OUT, N_SIZE, k * (N_SIZE / 100) / k_div, l * (N_SIZE / 100) / l_div);
             break;
         default:
             cout << "Error: Cannot find the sort type.\n";
@@ -320,7 +339,8 @@ int main(int argc, char* argv[]) {
     }
     auto end_time = chrono::high_resolution_clock::now();
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
-    writeResult(OUTPUT_FILE, k, l, ALGO, proc_time.count());
+    
+    writeResult(OUTPUT_FILE, k, k_div, l, l_div, ALGO, proc_time.count());
     cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
 
     delete [] workload;
