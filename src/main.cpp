@@ -286,7 +286,7 @@ int main(int argc, char* argv[]) {
     const string ALGO = argv[3];
 
     long long k_div = 1, l_div = 1;
-    if (argc < 6) {
+    if (argc > 4) {
         const string K_DIV = argv[4];
         k_div = atoll(K_DIV.c_str());
         const string L_DIV = argv[5];
