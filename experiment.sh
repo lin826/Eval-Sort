@@ -6,10 +6,13 @@ OUTPUT="./output/result_april26.csv"
 g++ -std=c++11 -Wall ./src/main.cpp -o ./main.out
 
 clear_cache () {
-    # Clean cache
+    # Clean cache on Linux
+    sync; echo 3 > /proc/sys/vm/drop_caches && swapoff -a && swapon -a;
+
+    # Clean cache on MacOS
     # https://stackoverflow.com/questions/28845524/echo-3-proc-sys-vm-drop-caches-on-mac-osx
     # https://gist.github.com/dan-palmer/3082266
-    sync && sudo purge;
+    # sync && sudo purge;
     # launchctl unload -w /System/Library/LaunchDaemons/com.apple.dynamic_pager.plist;
     # rm /private/var/vm/swapfile*;
     # launchctl load /System/Library/LaunchDaemons/com.apple.dynamic_pager.plist;
