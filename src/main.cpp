@@ -83,7 +83,7 @@ void writeResult(
     int l, 
     int l_div, 
     string algo, 
-    int duration_nanoseconds
+    long long duration_nanoseconds
 ) {
     ofstream myfile(filename, ios_base::app);
     // myfile << "./bods/workloads/createdata_K" << k << "_L" << l << ".txt,";
