@@ -61,11 +61,11 @@ int getWorkloadLen(string filename) {
     return count(istreambuf_iterator<char>(myfile), istreambuf_iterator<char>(), '\n');
 }
 
-bool readWorkload(string filename, long long workload_arr[])
+bool readWorkload(string filename, int workload_arr[])
 {
     ifstream myfile(filename, ios_base::in);
     if ( myfile.is_open() ) {
-        long long i = 0;
+        int i = 0;
         while ( myfile >> workload_arr[i]) {
             i += 1;
         }
@@ -78,12 +78,12 @@ bool readWorkload(string filename, long long workload_arr[])
 
 void writeResult(
     string filename, 
-    long long k, 
-    long long k_div, 
-    long long l, 
-    long long l_div, 
+    int k, 
+    int k_div, 
+    int l, 
+    int l_div, 
     string algo, 
-    long long duration_nanoseconds
+    int duration_nanoseconds
 ) {
     ofstream myfile(filename, ios_base::app);
     // myfile << "./bods/workloads/createdata_K" << k << "_L" << l << ".txt,";
@@ -94,27 +94,27 @@ void writeResult(
     myfile.close();
 }
 
-void printArray(long long arr[], int len)
+void printArray(int arr[], int len)
 {
     cout << arr[0] << ", " << arr[1] << ", " << arr[2] << ", ..., " ;
     cout << arr[len - 2] << ", " << arr[len - 1] << endl;
 }
 
-void stdStableSort(long long start[], long long end[]) {
+void stdStableSort(int start[], int end[]) {
     stable_sort(start, end);
 }
 
-void merge(long long arr[], int left, int mid, int right) {
-    long long n1 = mid - left + 1;
-    long long n2 = right - mid;
+void merge(int arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
 
-    long long *L = new long long[n1], *M = new long long[n2];
-    for (long long i = 0; i < n1; i++)
+    int *L = new int[n1], *M = new int[n2];
+    for (int i = 0; i < n1; i++)
         L[i] = arr[left + i];
-    for (long long j = 0; j < n2; j++)
+    for (int j = 0; j < n2; j++)
         M[j] = arr[mid + 1 + j];
 
-    long long i=0, j=0, k=left;
+    int i=0, j=0, k=left;
     while (i < n1 && j < n2) {
         if (L[i] <= M[j]) {
             arr[k] = L[i]; i++;
@@ -134,22 +134,22 @@ void merge(long long arr[], int left, int mid, int right) {
     delete [] M;
 }
 
-void mergeSort(long long array[], const long long begin, const long long end)
+void mergeSort(int array[], const int begin, const int end)
 {
     if (begin >= end)
         return; // Returns recursively
  
-    const long long mid = begin + (end - begin) / 2;
+    const int mid = begin + (end - begin) / 2;
     mergeSort(array, begin, mid);
     mergeSort(array, mid + 1, end);
     merge(array, begin, mid, end);
 }
 
-void insertionSort(long long arr[], int left, int right)
+void insertionSort(int arr[], int left, int right)
 {
     for (int i = left + 1; i <= right; i++)
     {
-        long long temp = arr[i];
+        int temp = arr[i];
         int j = i - 1;
         while (j >= left && arr[j] > temp)
         {
@@ -160,8 +160,8 @@ void insertionSort(long long arr[], int left, int right)
     }
 }
 
-void swap(long long arr[], int i, int j) {
-	long long temp = arr[i];
+void swap(int arr[], int i, int j) {
+	int temp = arr[i];
 	arr[i] = arr[j];
 	arr[j] = temp;
 }
@@ -179,47 +179,47 @@ int compare(const void* a, const void* b)
 	return 0;
 }
 
-long long getMax(long long arr[], int size) 
+int getMax(int arr[], int size) 
 { 
-    long long max = arr[0]; 
+    int max = arr[0]; 
     for (int i = 1; i < size; i++) 
         if (arr[i] > max) 
             max = arr[i]; 
     return max; 
 }
 
-void CountingSort(long long arr[], long long size, long long div) 
+void CountingSort(int arr[], int size, int div) 
 { 
-    long long *output = new long long[size]; 
-    long long count[10] = {0}; 
+    int *output = new int[size]; 
+    int count[10] = {0}; 
   
-    for (long long i = 0; i < size; i++) 
+    for (int i = 0; i < size; i++) 
         count[ (arr[i]/div)%10 ]++; 
   
-    for (long long i = 1; i < 10; i++) 
+    for (int i = 1; i < 10; i++) 
         count[i] += count[i - 1]; 
   
-    for (long long i = size - 1; i >= 0; i--) 
+    for (int i = size - 1; i >= 0; i--) 
     { 
         output[count[ (arr[i]/div)%10 ] - 1] = arr[i]; 
         count[ (arr[i]/div)%10 ]--; 
     } 
   
-    for (long long i = 0; i < size; i++) 
+    for (int i = 0; i < size; i++) 
         arr[i] = output[i]; 
     
     delete [] output;
 }
 
-void radixSort(long long arr[], long long size) 
-{ 
+void radixSort(int arr[], int size) 
+{
     // Reference: https://simplesnippets.tech/radix-sort-algorithm-with-c-code-sorting-algorithms-data-structures-algorithms/
-    long long m = getMax(arr, size); 
-    for (long long div = 1; m/div > 0; div *= 10)
+    int m = getMax(arr, size); 
+    for (int div = 1; m/div > 0; div *= 10)
         CountingSort(arr, size, div); 
 }
 
-void selectionSort(long long array[], int size) {
+void selectionSort(int array[], int size) {
     // Reference: https://www.programiz.com/dsa/selection-sort
     for (int step = 0; step < size - 1; step++) {
         int min_idx = step;
@@ -234,7 +234,7 @@ void selectionSort(long long array[], int size) {
     }
 }
 
-void timSort(long long arr[], int n)
+void timSort(int arr[], int n)
 {
     // Reference: https://www.geeksforgeeks.org/timsort/
     for (int i = 0; i < n; i+=RUN)
@@ -258,13 +258,13 @@ string get_target(string s, string begin_s, string end_s) {
     return s.substr(i + shift_i, j);
 }
 
-long long get_k(string s) {
+int get_k(string s) {
     string k = get_target(s, "_K", "_L").c_str();
     cout << "K: " << k << endl;
     return atoll(k.c_str());
 }
 
-long long get_l(string s) {
+int get_l(string s) {
     string l = get_target(s, "_L", ".txt").c_str();
     cout << "L: " << l << endl;
     return atoll(l.c_str());
@@ -281,11 +281,11 @@ int main(int argc, char* argv[]) {
     cout << "Algorithm: " << argv[3] << "\n";
 
     const string INPUT_FILE = argv[1];
-    const long long k = get_k(INPUT_FILE), l = get_l(INPUT_FILE);
+    const int k = get_k(INPUT_FILE), l = get_l(INPUT_FILE);
     const string OUTPUT_FILE = argv[2];
     const string ALGO = argv[3];
 
-    long long k_div = 1, l_div = 1;
+    int k_div = 1, l_div = 1;
     if (argc > 4) {
         const string K_DIV = argv[4];
         k_div = atoll(K_DIV.c_str());
@@ -297,13 +297,13 @@ int main(int argc, char* argv[]) {
 
     const int N_SIZE = getWorkloadLen(INPUT_FILE);
     cout << "N_SIZE: " << N_SIZE << "\n";
-    long long *workload = new long long[N_SIZE];
+    int *workload = new int[N_SIZE];
     bool read_result = readWorkload(INPUT_FILE, workload);
     if (read_result == false) {
         cout << "Error: Failed to open the file." << endl;
         return -1;
     }
-    long long *OUT = new long long[N_SIZE + 1];
+    int *OUT = new int[N_SIZE + 1];
     cout << "================================\n";
     cout << "Start sorting...\n";
     auto start_time = chrono::high_resolution_clock::now();

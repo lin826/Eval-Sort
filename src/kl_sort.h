@@ -7,23 +7,23 @@ using namespace std;
 
 // Reference: https://github.com/lin826/KL-sort
 
-bool kl_sort(long long R[], long long OUT[], long long n, long long k, long long l) {
+bool kl_sort(int R[], int OUT[], int n, int k, int l) {
    // Create two binary heaps S, G
    MinHeap S = MinHeap(n), G = MinHeap(n);
 
    // Insert the first k+l+1 tuples (R[1],...,R[k+l+1]) into S
-   for (long long i = 0; i < k+l && i < n; i++) {
+   for (int i = 0; i < k+l && i < n; i++) {
       S.insertKey(R[i]);
    }
-   long long i_write = 0;
+   int i_write = 0;
 
-   long long *TMP = new long long[n + 1];
-   for (long long i_read = S.getHeapSize(); i_read < n; i_read++) {
+   int *TMP = new int[n + 1];
+   for (int i_read = S.getHeapSize(); i_read < n; i_read++) {
       if (S.getHeapSize() <= 0) {
          return false;
       }
 
-      long long last_write = S.extractMin();
+      int last_write = S.extractMin();
       // Write last_write to TMP[i_write]
       TMP[i_write] = last_write;
 
@@ -42,8 +42,8 @@ bool kl_sort(long long R[], long long OUT[], long long n, long long k, long long
    }
 
    i_write = 0;
-   for (long long i_read = 0; i_read < n - G.getHeapSize(); i_read++) {
-      long long x = G.getMin();
+   for (int i_read = 0; i_read < n - G.getHeapSize(); i_read++) {
+      int x = G.getMin();
       if (x < 0 || x > TMP[i_read]) {
          // Write TMP[i_read] to OUT[i_write]
          OUT[i_write] = TMP[i_read];
