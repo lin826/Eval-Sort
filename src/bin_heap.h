@@ -92,7 +92,7 @@ void MinHeap::decreaseKey(int i, int new_val)
 int MinHeap::extractMin()
 {
 	if (heap_size <= 0)
-		return LLONG_MAX;
+		return INT_MAX;
 	if (heap_size == 1)
 	{
 		heap_size--;
