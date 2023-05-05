@@ -83,14 +83,16 @@ void writeResult(
     int l, 
     int l_div, 
     string algo, 
-    long long duration_nanoseconds
+    long long duration_nanoseconds,
+    string estimation
 ) {
     ofstream myfile(filename, ios_base::app);
     // myfile << "./bods/workloads/createdata_K" << k << "_L" << l << ".txt,";
     myfile << k << "," << k_div << ",";
     myfile << l << "," << l_div << ",";
     myfile << algo << ",";
-    myfile << duration_nanoseconds << "\n";
+    myfile << duration_nanoseconds << ",";
+    myfile << estimation << "\n";
     myfile.close();
 }
 
@@ -286,11 +288,14 @@ int main(int argc, char* argv[]) {
     const string ALGO = argv[3];
 
     int k_div = 1, l_div = 1;
-    if (argc > 4) {
+    char estimation_type;
+    if (argc == 6) {
         const string K_DIV = argv[4];
         k_div = atoll(K_DIV.c_str());
         const string L_DIV = argv[5];
         l_div = atoll(L_DIV.c_str());
+    } else if (argc == 5) {
+        estimation_type = argv[4][0];
     } else {
         cout << "Warning: Using default k_div=1 and l_div=1." << endl;
     }
@@ -304,6 +309,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     int *OUT = new int[N_SIZE + 1];
+    bool sort_result = true;
     cout << "================================\n";
     cout << "Start sorting...\n";
     auto start_time = chrono::high_resolution_clock::now();
@@ -331,7 +337,15 @@ int main(int argc, char* argv[]) {
             timSort(workload, N_SIZE);
             break;
         case SortingEnum::kl_sort:
-            kl_sort(workload, OUT, N_SIZE, k * (N_SIZE / 100) / k_div, l * (N_SIZE / 100) / l_div);
+            if (estimation_type == 'a') {
+                sort_result = kl_search_first(workload, OUT, N_SIZE);
+            } else if (estimation_type == 'b') {
+                sort_result = kl_search_second(workload, OUT, N_SIZE);
+            } else if (estimation_type == 'c') {
+                sort_result = kl_search_third(workload, OUT, N_SIZE);
+            } else {
+                sort_result = kl_sort(workload, OUT, N_SIZE, k * (N_SIZE / 100) / k_div, l * (N_SIZE / 100) / l_div);
+            }
             break;
         default:
             cout << "Error: Cannot find the sort type.\n";
@@ -339,8 +353,12 @@ int main(int argc, char* argv[]) {
     }
     auto end_time = chrono::high_resolution_clock::now();
     auto proc_time = chrono::duration_cast<chrono::nanoseconds>(end_time - start_time);
+
+    if (!sort_result) {
+        printArray(workload, N_SIZE);
+    }
     
-    writeResult(OUTPUT_FILE, k, k_div, l, l_div, ALGO, proc_time.count());
+    writeResult(OUTPUT_FILE, k, k_div, l, l_div, ALGO, proc_time.count(), argv[4]);
     cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
 
     delete [] workload;
