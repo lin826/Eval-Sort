@@ -90,14 +90,14 @@ int calculate_l(int R[], int n) {
 }
 
 // Precise K with the max L
-bool kl_search_first(int R[], int OUT[], int n) {
+bool kl_search_a(int R[], int OUT[], int n) {
    int k = calculate_k(R, n/100) * 100; // use the first 1% elements to estimate
    int l = n/2 - k; // half of elements set into heap S
    return kl_sort(R, OUT, n, k, l);
 }
 
 // Precise K with the min L = 0, or precise L with the min K = 0
-bool kl_search_second(int R[], int OUT[], int n) {
+bool kl_search_b(int R[], int OUT[], int n) {
    int k = calculate_k(R, n/100) * 100; // use the first 1% elements to estimate
    int l = calculate_l(R, n);
 
@@ -136,7 +136,7 @@ pair<int, int> estimate_kl(int R[], int n, int limit) {
 }
 
 // Estimation on between
-bool kl_search_third(int R[], int OUT[], int n) {
+bool kl_search_c(int R[], int OUT[], int n) {
    pair<int, int> kl = estimate_kl(R, n, n*7/10); // Only allow 70% distance to misplace
 
    return kl_sort(R, OUT, n, kl.first, kl.second);

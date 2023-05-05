@@ -338,11 +338,11 @@ int main(int argc, char* argv[]) {
             break;
         case SortingEnum::kl_sort:
             if (estimation_type == 'a') {
-                sort_result = kl_search_first(workload, OUT, N_SIZE);
+                sort_result = kl_search_a(workload, OUT, N_SIZE);
             } else if (estimation_type == 'b') {
-                sort_result = kl_search_second(workload, OUT, N_SIZE);
+                sort_result = kl_search_b(workload, OUT, N_SIZE);
             } else if (estimation_type == 'c') {
-                sort_result = kl_search_third(workload, OUT, N_SIZE);
+                sort_result = kl_search_c(workload, OUT, N_SIZE);
             } else {
                 sort_result = kl_sort(workload, OUT, N_SIZE, k * (N_SIZE / 100) / k_div, l * (N_SIZE / 100) / l_div);
             }
