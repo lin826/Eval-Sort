@@ -10,7 +10,7 @@ int main (int argc, char* argv[]) {
     long long SIZE = atoll(argv[1]);
     // Reference: https://cplusplus.com/reference/algorithm/random_shuffle/
     std::vector<long long> myvector;
-    for (long long i=1; i < SIZE; ++i) myvector.push_back(i);
+    for (long long i=1; i <= SIZE; ++i) myvector.push_back(i);
  
     int start = 1;
     std::iota(myvector.begin(), myvector.end(), start);
@@ -22,8 +22,7 @@ int main (int argc, char* argv[]) {
 
 
     for (std::vector<long long>::iterator it=myvector.begin(); it!=myvector.end(); ++it)
-        std::cout << '\n' << *it;
-    std::cout << '\n';
+        std::cout << *it << '\n';
 
     return 0;
 }
