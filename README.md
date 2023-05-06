@@ -20,16 +20,16 @@ The followings are step-by-step instructions.
 ### Compile
 
 ```sh
-g++ main.cpp -o main.out
+g++ -std=c++11 ./src/main.cpp -o ./main.out
 ```
 
 ### Run
 
 ```sh
-./main.out <INPUT_FILE_PATH> <OUTPUT_FILE_PATH> <SORTING_ALGO>
+./main.out <INPUT_FILE_PATH> <OUTPUT_FILE_PATH> <SORTING_ALGO> <K_DIV> <L_DIV> <KL_ESTIMATIOM>
 ```
 
-The arguments include `INPUT_FILE_PATH`, `OUTPUT_FILE_PATH`, and `SORTING_ALGO`.
+The arguments include `INPUT_FILE_PATH`, `OUTPUT_FILE_PATH`, `SORTING_ALGO`, `K_DIV`, `L_DIV`, and `KL_ESTIMATIOM`. The last three arguments are optional and only work under `kl_sort`.
 
 For example, we want to take `./bods/workloads/createdata_K100_L100.txt` as the input workload to sort with `std_stable`, and an output result saved to `./output/K100_L100.csv`. Then the command should be:
 
@@ -46,5 +46,14 @@ For example, we want to take `./bods/workloads/createdata_K100_L100.txt` as the 
 - radix_sort
 - selection_sort
 - tim_sort
+- kl_sort
+<!-- - [ ] Heap Sort -->
+<!-- - [ ] K Sort -->
 <!-- - [ ] KL-addaptive Sort -->
 <!-- - [ ] Hybrid Sort -->
+
+#### (K, L) Estimations
+
+- 'a' <!-- TODO: Explaination -->
+- 'b' <!-- TODO: Explaination -->
+- 'c' <!-- TODO: Explaination -->
