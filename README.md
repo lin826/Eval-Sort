@@ -3,12 +3,19 @@
 ## Generate Workload
 
 <!-- TODO: Add instructions to use BoDS -->
-Refer to [BU-DiSC/BoDS](https://github.com/BU-DiSC/bods), we compile the generator then move it into our `./bods/` folder.
+Refer to [BU-DiSC/BoDS](https://github.com/BU-DiSC/bods), we compile the generator then move the resulting executable file under our `./bods/` folder.
 
 ```sh
 cd ./bods
 mv <GENERATOR_FILE_PATH> ./sortedness_data_generator
 bash ./auto_gen.sh
+```
+
+### Create scrambled data
+
+```sh
+g++ ./src/shuffle.cpp -o ./shuffle.out
+./shuffle.out <SIZE_OF_ARRAY> > <OUTPUTFILE> 
 ```
 
 ## Experiment
