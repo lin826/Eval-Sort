@@ -3,7 +3,7 @@
 ## Generate Workload
 
 <!-- TODO: Add instructions to use BoDS -->
-Refer to [BU-DiSC/BoDS](https://github.com/BU-DiSC/bods), we compile the generator then move the resulting executable file under our `./bods/` folder.
+Refer to [BU-DiSC/BoDS](https://github.com/BU-DiSC/bods), we compile the generator then move the resulting executable file under `./bods/` folder.
 
 ```sh
 cd ./bods
