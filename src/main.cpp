@@ -14,13 +14,13 @@ const int RUN = 32; // TimSort individual subarrays of size RUN
 namespace SortingEnum
 {
     // Reference: https://stackoverflow.com/questions/261963/how-can-i-iterate-over-an-enum
-    enum SortingType { 
+    enum SortingType {
         std_stable,
-        insertion_sort, 
-        merge_sort, 
-        quick_sort, 
-        radix_sort, 
-        selection_sort, 
+        insertion_sort,
+        merge_sort,
+        quick_sort,
+        radix_sort,
+        selection_sort,
         tim_sort,
         kl_sort,
         invalid_sort,
@@ -77,12 +77,12 @@ bool readWorkload(string filename, int workload_arr[])
 }
 
 void writeResult(
-    string filename, 
-    int k, 
-    int k_div, 
-    int l, 
-    int l_div, 
-    string algo, 
+    string filename,
+    int k,
+    int k_div,
+    int l,
+    int l_div,
+    string algo,
     long long duration_nanoseconds,
     string estimation
 ) {
@@ -140,7 +140,7 @@ void mergeSort(int array[], const int begin, const int end)
 {
     if (begin >= end)
         return; // Returns recursively
- 
+
     const int mid = begin + (end - begin) / 2;
     mergeSort(array, begin, mid);
     mergeSort(array, mid + 1, end);
@@ -181,44 +181,44 @@ int compare(const void* a, const void* b)
 	return 0;
 }
 
-int getMax(int arr[], int size) 
-{ 
-    int max = arr[0]; 
-    for (int i = 1; i < size; i++) 
-        if (arr[i] > max) 
-            max = arr[i]; 
-    return max; 
+int getMax(int arr[], int size)
+{
+    int max = arr[0];
+    for (int i = 1; i < size; i++)
+        if (arr[i] > max)
+            max = arr[i];
+    return max;
 }
 
-void CountingSort(int arr[], int size, int div) 
-{ 
-    int *output = new int[size]; 
-    int count[10] = {0}; 
-  
-    for (int i = 0; i < size; i++) 
-        count[ (arr[i]/div)%10 ]++; 
-  
-    for (int i = 1; i < 10; i++) 
-        count[i] += count[i - 1]; 
-  
-    for (int i = size - 1; i >= 0; i--) 
-    { 
-        output[count[ (arr[i]/div)%10 ] - 1] = arr[i]; 
-        count[ (arr[i]/div)%10 ]--; 
-    } 
-  
-    for (int i = 0; i < size; i++) 
-        arr[i] = output[i]; 
-    
+void CountingSort(int arr[], int size, int div)
+{
+    int *output = new int[size];
+    int count[10] = {0};
+
+    for (int i = 0; i < size; i++)
+        count[ (arr[i]/div)%10 ]++;
+
+    for (int i = 1; i < 10; i++)
+        count[i] += count[i - 1];
+
+    for (int i = size - 1; i >= 0; i--)
+    {
+        output[count[ (arr[i]/div)%10 ] - 1] = arr[i];
+        count[ (arr[i]/div)%10 ]--;
+    }
+
+    for (int i = 0; i < size; i++)
+        arr[i] = output[i];
+
     delete [] output;
 }
 
-void radixSort(int arr[], int size) 
+void radixSort(int arr[], int size)
 {
     // Reference: https://simplesnippets.tech/radix-sort-algorithm-with-c-code-sorting-algorithms-data-structures-algorithms/
-    int m = getMax(arr, size); 
+    int m = getMax(arr, size);
     for (int div = 1; m/div > 0; div *= 10)
-        CountingSort(arr, size, div); 
+        CountingSort(arr, size, div);
 }
 
 void selectionSort(int array[], int size) {
@@ -357,7 +357,7 @@ int main(int argc, char* argv[]) {
     if (!sort_result) {
         printArray(workload, N_SIZE);
     }
-    
+   
     writeResult(OUTPUT_FILE, k, k_div, l, l_div, ALGO, proc_time.count(), argv[4]);
     cout << INPUT_FILE << "(" << ALGO << "): " << proc_time.count() << " nanoseconds" << endl;
 
