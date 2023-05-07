@@ -1,4 +1,4 @@
-# CS561-Final-Sort
+# Eval-Sort
 
 ## Generate Workload
 
